@@ -1,0 +1,254 @@
+﻿@page "/cyclesensorgraph"
+@using Radzen
+@using Radzen.Blazor
+<div class="row px-3">
+    <div class="col-md-3 col-lg-6 col-xl-6 p-3">
+        <RadzenCard>
+            <div class="row">
+                <div class="col">
+                    <p class="mb-4">Start</p>
+                    <RadzenDatePicker @bind-Value=@startTime DateFormat="yyyy-MM-dd HH:mm:ss" ShowTime="true" Change=@(args => OnTimeChange(args, "StartDatePicker", "MM/dd/yyyy")) Class="w-100" />
+                </div>
+                <div class="col">
+                    <p class="mb-4">End</p>
+                    <RadzenDatePicker @bind-Value=@endTime DateFormat="yyyy-MM-dd HH:mm:ss" ShowTime="true" Change=@(args => OnTimeChange(args, "EndDatePicker", "MM/dd/yyyy")) Class="w-100" />
+                </div>
+            </div>
+        </RadzenCard>
+        <RadzenCard>
+            <MudButton Variant="MudBlazor.Variant.Filled" DisableElevation="true" Color="Color.Primary" @onclick="e=>ClickCalenderValidate()">Valider selection</MudButton>
+        </RadzenCard>
+
+    </div>
+    <div class="col-md-3 col-lg-6 col-xl-6 p-3">
+        <RadzenCard>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_sensor_1" ToggledChanged="OnSensor1VisibilityToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideChartSensor1"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowChartSensor1" />
+                        </div>
+                        <span>Capteur 1 @(show_sensor_1 ? "Visible" : "Invisible")</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_sensor_3" ToggledChanged="OnSensor3VisibilityToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideChartSensor3"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowChartSensor3" />
+                        </div>
+                        <span>Capteur 3 @(show_sensor_3 ? "Visible" : "Invisible")</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_sensor_5" ToggledChanged="OnSensor5VisibilityToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideChartSensor5"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowChartSensor5" />
+                        </div>
+                        <span>Capteur 5 @(show_sensor_5 ? "Visible" : "Invisible")</span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_sensor_2" ToggledChanged="OnSensor2VisibilityToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideChartSensor2"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowChartSensor2" />
+                        </div>
+                        <span>Capteur 2 @(show_sensor_2 ? "Visible" : "Invisible")</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_sensor_4" ToggledChanged="OnSensor4VisibilityToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideChartSensor4"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowChartSensor4" />
+                        </div>
+                        <span>Capteur 4 @(show_sensor_4 ? "Visible" : "Invisible")</span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1 col-lg-1 col-xl-1">
+                            <MudToggleIconButton Toggled="@show_cycle_datetime" ToggledChanged="OnCycleDatetimeToggledChanged"
+                                                 Icon="@Icons.Material.Filled.VisibilityOff" Color="@Color.Error" Title="HideCycleDatetime"
+                                                 ToggledIcon="@Icons.Material.Filled.Visibility" ToggledColor="@Color.Success" ToggledTitle="ShowCycleDatetime" />
+                        </div>
+                        <span>Chart @(show_cycle_datetime ? "Visible" : "Invisible")</span>
+                    </div>
+                </div>
+            </div>
+        </RadzenCard>
+
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <RadzenFieldset AllowCollapse="true" Collapsed=@collapse Style="border-radius:10px;">
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <b>Sensors</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <div class="row">
+                    <div class="@style_cycle_datetime">
+                        <svg class="w-100" id="cycle_chart">
+                            <g class="cycle_xAxis"></g>
+                                <text id="cycle_chart_x_label"></text>
+                            <g class="cycle_yAxis"></g>
+                                <text id="cycle_chart_y_label"></text>
+                            <g class="gCycleGrid"></g>
+                            <g class="gCycleDot"></g>
+                            <g>
+                                <path class="gCycleLine" stroke="red" style="opacity:0.4;stroke-width:inherit;fill:none"></path>
+                            </g>
+                        </svg>
+                        <div id="cycle_tooltip" class="tooltip"></div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="@style_cycle_datetime">
+                        <svg class="w-100" id="cycleTime_chart">
+                            <g class="cycleTime_xAxis"></g>
+                                <text id="cycleTime_chart_x_label"></text>
+                            <g class="cycleTime_yAxis"></g>
+                                <text id="cycleTime_chart_y_label"></text>
+                            <g class="gCycleTimeGrid"></g>
+                            <g class="gCycleTimeDot"></g>
+                            <g>
+                                <path class="gCycleTimeLine" stroke="red" style="opacity:0.4;stroke-width:inherit;fill:none"></path>
+                            </g>
+                        </svg>
+                        <div id="cycle_tooltip" class="tooltip"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="@style_sensor_1">
+                        <svg class="w-100" id="cycleSensor_1_chart">
+                            <g id="cycleSensor_xAxis_1" class="cycleSensor_xAxis"></g>
+                            <text id="cycleSensor_xAxis_1_label" class="cycleSensor_xAxis_label"></text>
+                            <g id="cycleSensor_yAxis_1" class="cycleSensor_yAxis"></g>
+                            <text id="cycleSensor_yAxis_1_label"></text>
+                            <g id="gCycleSensorGrid_1" class="gCycleSensorGrid"></g>
+
+                            <g class="gCycleSensorDot_1"></g>
+                            <g>
+                                <path id="gTH1" class="gT"></path>
+                            </g>
+                            <g>
+                                <path id="gTL1" class="gT"></path>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="@style_sensor_2">
+                        <svg class="w-100" id="cycleSensor_2_chart">
+                            <g id="cycleSensor_xAxis_2" class="cycleSensor_xAxis"></g>
+                            <text id="cycleSensor_xAxis_2_label" class="cycleSensor_xAxis_label"></text>
+
+                            <g id="cycleSensor_yAxis_2" class="cycleSensor_yAxis"></g>
+                            <text id="cycleSensor_yAxis_2_label"></text>
+
+                            <g id="gCycleSensorGrid_2" class="gCycleSensorGrid"></g>
+                            <g class="gCycleSensorDot_2"></g>
+                            <g>
+                                <path id="gTH2" class="gT"></path>
+                            </g>
+                            <g>
+                                <path id="gTL2" class="gT"></path>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="@style_sensor_3">
+                    <div class="col">
+                        <svg class="w-100" id="cycleSensor_3_chart">
+                            <g id="cycleSensor_xAxis_3" class="cycleSensor_xAxis"></g>
+                            <text id="cycleSensor_xAxis_3_label" class="cycleSensor_xAxis_label"></text>
+
+                            <g id="cycleSensor_yAxis_3" class="cycleSensor_yAxis"></g>
+                            <text id="cycleSensor_yAxis_3_label"></text>
+
+                            <g id="gCycleSensorGrid_3" class="gCycleSensorGrid"></g>
+                            <g class="gCycleSensorDot_3"></g>
+                            <g>
+                                <path id="gTH3" class="gT"></path>
+                            </g>
+                            <g>
+                                <path id="gTL3" class="gT"></path>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="@style_sensor_4">
+                    <div class="col">
+                        <svg class="w-100" id="cycleSensor_4_chart">
+                            <g id="cycleSensor_xAxis_4" class="cycleSensor_xAxis"></g>
+                            <text id="cycleSensor_xAxis_4_label" class="cycleSensor_xAxis_label"></text>
+
+                            <g id="cycleSensor_yAxis_4" class="cycleSensor_yAxis"></g>
+                            <text id="cycleSensor_yAxis_4_label"></text>
+
+                            <g id="gCycleSensorGrid_4" class="gCycleSensorGrid"></g>
+                            <g class="gCycleSensorDot_4"></g>
+                            <g>
+                                <path id="gTH4" class="gT"></path>
+                            </g>
+                            <g>
+                                <path id="gTL4" class="gT"></path>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div class="@style_sensor_5">
+                    <div class="col">
+                        <svg class="w-100" id="cycleSensor_5_chart">
+                            <g id="cycleSensor_xAxis_5" class="cycleSensor_xAxis"></g>
+                            <text id="cycleSensor_xAxis_5_label"class="cycleSensor_xAxis_label"></text>
+
+                            <g id="cycleSensor_yAxis_5" class="cycleSensor_yAxis"></g>
+                            <text id="cycleSensor_yAxis_5_label"></text>
+
+                            <g id="gCycleSensorGrid_5" class="gCycleSensorGrid"></g>
+                            <g class="gCycleSensorDot_5"></g>
+                            <g>
+                                <path id="gTH5" class="gT"></path>
+                            </g>
+                            <g>
+                                <path id="gTL5" class="gT"></path>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                <div id="cyclesensors_tooltip" class="tooltip"></div>
+            </ChildContent>
+            <SummaryTemplate>
+                <RadzenCard class="mt-3">
+                    <b>Sensors </b>
+                </RadzenCard>
+            </SummaryTemplate>
+        </RadzenFieldset>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-12">
+        <RadzenFieldset AllowCollapse="true" Collapsed=@collapse Style="border-radius:10px;">
+            <HeaderTemplate>
+                <span class="d-inline-flex align-items-center align-middle">
+                    <b>PL</b>
+                </span>
+            </HeaderTemplate>
+            <ChildContent>
+                <svg class="w-100" id="pl_chart" />
+                <div id="pl_tooltip"></div>
+            </ChildContent>
+            <SummaryTemplate>
+                <RadzenCard class="mt-3">
+                    <b>PL </b>
+                </RadzenCard>
+            </SummaryTemplate>
+        </RadzenFieldset>
+    </div>
+</div>

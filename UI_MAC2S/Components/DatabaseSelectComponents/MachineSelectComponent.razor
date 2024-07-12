@@ -1,0 +1,17 @@
+﻿@page "/machineselect"
+@using MudBlazor
+@if (MachineRawData == null)
+{
+    <p>Loading...</p>
+              <Fold Color="rgba(0, 148, 255,0.87);"></Fold>
+
+}
+else
+{
+<select value="@selectedDb" @onchange="@(HandleChange)"   class="form-control">
+    @foreach (var i in MachineRawData)
+    {
+        <option value="@i.DbName">@i.DbName</option>
+    }
+</select>
+}

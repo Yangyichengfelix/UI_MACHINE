@@ -1,0 +1,118 @@
+﻿@page "/graph"
+@using Radzen
+@using Radzen.Blazor
+
+
+
+<div class="container" style="background-color:rgba(220,220,220,0.3);">
+
+    <div class="row px-3">
+        <div class="col-md-6 col-lg-6 col-xl-6 p-3">
+
+            <RadzenCard>
+                <h4 class="mb-4">Start</h4>
+                <RadzenDatePicker @bind-Value=@startTime DateFormat="yyyy-MM-dd HH:mm:ss" ShowTime="true" Change=@(args => OnTimeChange(args, "StartDatePicker", "MM/dd/yyyy")) Class="w-100" />
+            </RadzenCard>
+
+
+        </div>
+        <div class="col-md-6 col-lg-6 col-xl-6 p-3">
+            <RadzenCard>
+                <h4 class="mb-4">End</h4>
+                <RadzenDatePicker @bind-Value=@endTime DateFormat="yyyy-MM-dd HH:mm:ss" ShowTime="true" Change=@(args => OnTimeChange(args, "EndDatePicker", "MM/dd/yyyy")) Class="w-100" />
+            </RadzenCard>
+        </div>
+
+    </div>
+
+@*    <div class="row">
+        <div class="col-sm-12 my-5">
+            <Div Position="Position.Absolute.Top.Is0.End.Is0">
+                <RadzenButton ButtonStyle="ButtonStyle.Info" Text="View data" Click="@ClickCalenderValidate" Class="w-100" BusyText="Invoking ..." IsBusy=@busy />
+            </Div>
+        </div>
+    </div>*@
+
+    <div class="row">
+        <div class="col-xl-12">
+            <RadzenFieldset AllowCollapse="true" Collapsed=@collapse Style="border-radius:10px;">
+                <HeaderTemplate>
+                    <span class="d-inline-flex align-items-center align-middle">
+                        <b>Sensors</b>
+                    </span>
+                </HeaderTemplate>
+                <ChildContent>
+
+
+
+@*                    <MudSelect T="int" Label="Select sensor"
+                               @bind-value="@selectedGroupValue">
+
+                        @foreach (var i in myGroup)
+                        {
+                            <MudSelectItem T="int" Value="@i.SensorValueField">@i.SensorTextField</MudSelectItem>
+                        }
+                    </MudSelect>*@
+                    <div class="row">
+                        <div class="row">
+                            <svg class="w-100" id="realtime_chart" >
+                                <g id="sensor1_xAxis"></g>
+                                <g id="sensor1_yAxis"></g>
+                                <g id="gGrid1"></g>                           
+                                <g id="gDot1"></g>
+                                <g>
+                                    <path id="gLine1" stroke="red" style="opacity:0.4;stroke-width:0.inherit;fill:none"></path>
+                                </g>
+                            </svg>
+                            <div id="sensors_tooltip"  class="tooltip"></div>
+
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="row">
+                            <svg class="w-100" id="realtime_chart2" >
+                                <g  class="sensor2_xAxis"></g>
+                                <g  class="sensor2_yAxis"></g>
+                                <g class="gGrid2"></g>
+
+                                <g class="gDot2"></g>
+                                <g>
+                                    <path class="gLine2" stroke="blue" style="opacity:0.4;stroke-width:0.inherit;fill:none"></path>
+                                </g>
+                            </svg>
+                            <div id="sensors2_tooltip" class="tooltip"></div>
+
+                        </div>
+               
+                    </div>
+                </ChildContent>
+                <SummaryTemplate>
+                    <RadzenCard class="mt-3">
+                        <b>Sensors </b>
+                    </RadzenCard>
+                </SummaryTemplate>
+            </RadzenFieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-12">
+            <RadzenFieldset AllowCollapse="true" Collapsed=@collapse Style="border-radius:10px;">
+                <HeaderTemplate>
+                    <span class="d-inline-flex align-items-center align-middle">
+                        <b>PL</b>
+                    </span>
+                </HeaderTemplate>
+                <ChildContent>
+                    <svg class="w-100" id="pl_chart" />
+                    <div id="pl_tooltip"></div>
+                </ChildContent>
+                <SummaryTemplate>
+                    <RadzenCard class="mt-3">
+                        <b>PL </b>
+                    </RadzenCard>
+                </SummaryTemplate>
+            </RadzenFieldset>
+        </div>
+    </div>
+</div>
